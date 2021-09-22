@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import NumberFormat from 'react-number-format';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +16,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import { useHistory } from "react-router-dom";
+import { getRequestUnauthorized, postRequestUnauthorized, postFileUnauthorized } from "../../helper/handleRequest";
+
+var path = require('path');
 
 function Copyright() {
     return (
@@ -96,6 +99,20 @@ NumberFormatCustom.propTypes = {
 };
 
 export default function NewCase() {
+    const [fullname, setFullname] = useState('');
+    const [birthdate, setBirthdate] = useState('');
+    const [identityTypeId, setIdentityTypeId] = useState('');
+    const [identityNumber, setIdentityNumber] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [salary, setSalary] = useState('');
+    const [ammountRequested, setAmmountRequested] = useState('');
+    const [comments, setComments] = useState('');
+
+    const [propertyFile, setPropertyFile] = useState(null);
+
+    const [identityTypes, setIdentityTypes] = useState([]);
+
     const [showConfirmation, setShowConfirmation] = useState(false);
 
     let history = useHistory();
@@ -105,10 +122,44 @@ export default function NewCase() {
         history.push("/");
     }
 
-    function confirmCaseCreated() {
+    async function confirmCaseCreated() {
+        const formData = new FormData();
+        formData.append('property', propertyFile[0])
+
+        const urlUploadFile = path.join('/credit', 'property');
+        const uploadResponse = await postFileUnauthorized(urlUploadFile, formData, history);
+        const creditId = uploadResponse.credit_id;
+
+        const urlRequestCredit = path.join('/credit');
+        await postRequestUnauthorized(urlRequestCredit, history, {
+            'customer' : {
+                'fullname': fullname,
+                'birthdate': birthdate,
+                'identity_type': {
+                    'identity_type_id': identityTypeId
+                },
+                'identity_number': identityNumber,
+                'email': email,
+                'phone': phone,
+                'salary': salary
+            },
+            'amount_requested': ammountRequested,
+            'comments': comments,
+            'credit_id': creditId
+        });
+
         setShowConfirmation(true);
         window.scrollTo(0, 0);
     }
+
+    useEffect(() => {
+        async function fetchData() {
+            const url = path.join('/parametric_entity', 'identity_type');
+            const identityTypes = await getRequestUnauthorized(url, history);
+            setIdentityTypes(identityTypes);
+        }
+        fetchData();
+    }, []);
 
     return (
         <React.Fragment>
@@ -146,6 +197,9 @@ export default function NewCase() {
                                             name="firstName"
                                             fullWidth
                                             autoComplete="given-name"
+                                            value={fullname}
+                                            onChange={e => setFullname(e.target.value)}
+                                            autoFocus
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -160,6 +214,8 @@ export default function NewCase() {
                                             InputLabelProps={{
                                                 shrink: true,
                                             }}
+                                            value={birthdate}
+                                            onChange={e => setBirthdate(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -169,7 +225,17 @@ export default function NewCase() {
                                             fullWidth
                                             id="type_id"
                                             labelId="type_id"
+                                            onChange={e => setIdentityTypeId(e.target.value)}
+                                            defaultValue={''}
                                         >
+                                            {identityTypes.map(item => (
+                                                <option
+                                                    key={item.identity_type_id}
+                                                    value={item.identity_type_id}
+                                                >
+                                                    {item.name}
+                                                </option>
+                                            ))}
                                         </Select>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -180,16 +246,8 @@ export default function NewCase() {
                                             id="number_id"
                                             name="number_id"
                                             autoComplete="id"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FormHelperText>Número de identificación</FormHelperText>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            id="number_id"
-                                            name="number_id"
-                                            autoComplete="id"
+                                            value={identityNumber}
+                                            onChange={e => setIdentityNumber(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -200,6 +258,8 @@ export default function NewCase() {
                                             id="email"
                                             name="email"
                                             autoComplete="email"
+                                            value={email}
+                                            onChange={e => setEmail(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -211,6 +271,8 @@ export default function NewCase() {
                                             type=""
                                             name="phone"
                                             autoComplete="phone"
+                                            value={phone}
+                                            onChange={e => setPhone(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -224,6 +286,8 @@ export default function NewCase() {
                                             InputProps={{
                                                 inputComponent: NumberFormatCustom,
                                             }}
+                                            value={salary}
+                                            onChange={e => setSalary(e.target.value)}
                                         />
                                     </Grid>
                                 </Grid>
@@ -244,6 +308,8 @@ export default function NewCase() {
                                             InputProps={{
                                                 inputComponent: NumberFormatCustom,
                                             }}
+                                            value={ammountRequested}
+                                            onChange={e => setAmmountRequested(e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -251,13 +317,14 @@ export default function NewCase() {
                                         <TextField
                                             required
                                             fullWidth
-                                            id="ammount"
-                                            name="ammount"
+                                            id="property"
+                                            name="property"
                                             type="file"
+                                            onChange={e => setPropertyFile(e.target.files)}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <FormHelperText>Comments</FormHelperText>
+                                        <FormHelperText>Destino del crédito</FormHelperText>
                                         <TextField
                                             required
                                             fullWidth
@@ -265,6 +332,8 @@ export default function NewCase() {
                                             id="comments"
                                             name="comments"
                                             autoComplete="comments"
+                                            value={comments}
+                                            onChange={e => setComments(e.target.value)}
                                         />
                                     </Grid>
                                 </Grid>
@@ -276,6 +345,7 @@ export default function NewCase() {
                                         variant="contained"
                                         color="primary"
                                         size="small"
+                                        disabled={!propertyFile}
                                         onClick={confirmCaseCreated}
                                     >
                                         Enviar

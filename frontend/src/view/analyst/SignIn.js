@@ -12,6 +12,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
+import { postRequestUnauthorized } from "../../helper/handleRequest";
+
+var path = require('path');
 
 function Copyright() {
   return (
@@ -58,20 +61,36 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn() {
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [showLoginError, setShowLoginError] = useState(false);
+  const [enableOperations, setEnableOperations] = useState(true);
 
   let history = useHistory();
   const classes = useStyles();
 
-  function login() {
-    if (isValidUser())
+  async function login() {
+    setEnableOperations(false);
+    if (await isValidUser())
       redirectListCases();
     else
-      showErrorMessage();
+    showErrorMessage();
+    setEnableOperations(true);
   }
 
-  function isValidUser() {
-    return true;
+  async function isValidUser() {
+    const url = path.join('/user', 'login');
+    const request = await postRequestUnauthorized(url, history, {
+      'email': userName,
+      'password': password
+    });
+    if (request && request.token) {
+      localStorage.setItem('token', request.token);
+      history.push('/');
+      return true;
+    }
+    else
+      return false;
   }
 
   function redirectListCases() {
@@ -80,9 +99,6 @@ export default function SignIn() {
 
   function showErrorMessage() {
     setShowLoginError(true);
-    setTimeout(() => {
-      setShowLoginError(false);
-    }, 3000);
   }
 
   function redirectStartPage() {
@@ -117,6 +133,8 @@ export default function SignIn() {
               label="Usuario"
               name="email"
               autoComplete="email"
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
               autoFocus
             />
             <TextField
@@ -129,27 +147,29 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
             />
             <Grid container spacing={3}>
               <Grid item xs={6} sm={6}>
                 <Button
-                  type="submit"
                   fullWidth
                   variant="contained"
                   color="primary"
                   className={classes.submit}
                   onClick={login}
+                  disabled={!enableOperations}
                 >
                   Iniciar Sesión
                 </Button>
               </Grid>
               <Grid item xs={6} sm={6}>
                 <Button
-                  type="submit"
                   fullWidth
                   variant="contained"
                   className={classes.submit}
                   onClick={redirectStartPage}
+                  disabled={!enableOperations}
                 >
                   Cancelar
                 </Button>

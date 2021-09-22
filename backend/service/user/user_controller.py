@@ -15,9 +15,6 @@ user_api = Blueprint('account_api', __name__)
 user_provider = UserProvider()
 
 # endpoints
-@user_api.route('/', methods=['GET'])
-def test_user():
-    return jsonify({"user": "1"})
 
 @user_api.route("/login", methods=['POST'])
 @convert_input_to(User)
@@ -38,17 +35,17 @@ def login(user: User):
         }
         return app.response_class(response=json.dumps(return_data), mimetype='application/json'), 500
 
-@user_api.route('/me',methods=['GET'])
+@user_api.route('/me', methods=['GET'])
 @token_required
 def get_current_user():
     user = get_session_user()
     return jsonify(user)
 
-@user_api.route('/logout',methods=['DELETE'])
+@user_api.route('/logout', methods=['DELETE'])
 @token_required
 def logout():
     user_provider.logout_user(request.headers['authorization'])
     return_data = {
-        "message": "User logout"
+        "message": "User log off"
     }
     return app.response_class(response=json.dumps(return_data), mimetype='application/json')

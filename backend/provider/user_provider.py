@@ -8,8 +8,7 @@ from model.user import User
 from utility.sql_server import open_connection, close_cursor
 
 # initializations
-root_folder = os.path.abspath(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))))
+root_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(root_folder)
 app = Flask(__name__)
 app.config.from_object('config')
@@ -18,7 +17,6 @@ app_secret_key = app.config["APP_SECRET_KEY"]
 class UserProvider():
 
     # methods
-
     def login_user(self, user: User):
         cnn = None 
         try:

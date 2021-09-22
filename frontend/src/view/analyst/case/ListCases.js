@@ -6,6 +6,9 @@ import Button from '@material-ui/core/Button';
 import { useHistory, useParams } from "react-router-dom";
 import LeftNavigation from '../common/LeftNavigation';
 import Footer from '../common/Footer';
+import { getRequest } from "../../../helper/handleRequest";
+
+var path = require('path');
 
 const drawerWidth = 240;
 
@@ -95,15 +98,23 @@ export default function ListCases() {
     let history = useHistory();
 
     useEffect(() => {
+        async function getCases() {
+            const url = path.join('/credit', 'analyst');
+            const cases = await getRequest(url, history);
+            if (cases)
+                setRows(cases.map(function(row) {
+                    return { ...row, id : row.credit_id }
+                }));
+        }
         getCases();
     }, [])
 
     const columns = [
-        { field: 'id', headerName: 'Id', width: 100 },
-        { field: 'fullName', headerName: 'Nombre Completo', width: 300 },
-        { field: 'idNumber', headerName: 'Número de Identificación', width: 250 },
-        { field: 'amountRequested', headerName: 'Monto Solicitado', width: 200 },
-        { field: 'dateRequested', headerName: 'Fecha de Solicitud', width: 200 },
+        { field: 'credit_id', headerName: 'Id', width: 100 },
+        { field: 'fullname', headerName: 'Nombre Completo', width: 300 },
+        { field: 'identity_number', headerName: 'Número de Identificación', width: 250 },
+        { field: 'amount_requested', headerName: 'Monto Solicitado', width: 200 },
+        { field: 'date_requested', headerName: 'Fecha de Solicitud', width: 200 },
         {
             field: 'eval', headerName: 'Acciones', width: 150,
             renderCell: (params) => (
@@ -126,29 +137,23 @@ export default function ListCases() {
         history.push(`/case/${id}`);
     }
 
-    function getCases() {
-        const data = [
-            { id: 1, fullName: 'React' },
-            { id: 2, fullName: 'Material-UI' },
-        ];
-        setRows(data);
-    }
-
     return (
-        <div className={classes.root}>
-            <LeftNavigation title="CASOS" />
-            <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                    <div style={{ height: 250, width: '100%' }}>
-                        <DataGrid
-                            columns={columns}
-                            rows={rows}
-                        />
-                    </div>
-                </Container>
-            </main>
+        <div>
+            <div className={classes.root}>
+                <LeftNavigation title="CASOS" />
+                <main className={classes.content}>
+                    <div className={classes.appBarSpacer} />
+                    <Container maxWidth="lg" className={classes.container}>
+                        <div style={{ height: 250, width: '100%' }}>
+                            <DataGrid
+                                columns={columns}
+                                rows={rows}
+                            />
+                        </div>
+                    </Container>
+                </main>
+            </div >
             <Footer />
-        </div >
+        </div>
     );
 }

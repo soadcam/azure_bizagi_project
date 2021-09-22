@@ -7,6 +7,7 @@ import NewCase from '../../customer/NewCase';
 import ListCases from '../../analyst/case/ListCases';
 import SignOut from '../../analyst/SignOut';
 import EvaluateCase from '../../analyst/case/EvaluateCase';
+import Error from '../Error';
 
 const RouterCustom = () => (
     <Router history={history}>
@@ -17,6 +18,7 @@ const RouterCustom = () => (
         <Route path='/cases' component={ListCases}/>
         <Route path='/case/:id' component={EvaluateCase}/>
         <Route path='/sign_out' component={SignOut}/>
+        <Route path='/error' component={Error}/>
       </div>
   </Router>
 )

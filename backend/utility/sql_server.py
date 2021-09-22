@@ -18,7 +18,8 @@ db_connection_string = 'DRIVER={SQL Server};SERVER=' + \
     ';UID='+db_username+';PWD=' + db_password
 
 def open_connection():
-    return pyodbc.connect(db_connection_string)
+    conn = pyodbc.connect(db_connection_string)
+    return conn
 
 def close_cursor(cnn, cursor):
     if(cnn):
