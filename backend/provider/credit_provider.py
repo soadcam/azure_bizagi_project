@@ -7,7 +7,7 @@ from model.credit import Credit
 from model.credit_evaluation import CreditEvaluation
 from provider.customer_provider import CustomerProvider
 from utility.sql_server import open_connection, close_cursor
-from utility.blob_storage import create_container, upload_file
+from utility.blob_storage import create_container, upload_file, download_file
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
@@ -178,7 +178,8 @@ class CreditProvider():
         try:
             cnn = open_connection()
             cursor = cnn.cursor()
-            query = """ SELECT  format_credit_url
+            query = """ SELECT  format_credit_url,
+                                upload_url_path
                         FROM    credits
                         WHERE   credit_id = ?
                                 """   
@@ -187,7 +188,10 @@ class CreditProvider():
             credit_db = cursor.fetchone()
             if credit_db is None:
                 return credit_db
-            return credit_db[0]
+            format_credit_url = credit_db[0]
+            upload_url_path = credit_db[1]
+            local_full_path = download_file(upload_url_path, app.config['UPLOAD_FILES_PATH'], format_credit_url)
+            return local_full_path
         finally:
             close_cursor(cnn, cursor)
 
@@ -196,7 +200,8 @@ class CreditProvider():
         try:
             cnn = open_connection()
             cursor = cnn.cursor()
-            query = """ SELECT  property_url_modified
+            query = """ SELECT  property_url_modified,
+                                upload_url_path
                         FROM    credits
                         WHERE   credit_id = ?
                                 """   
@@ -205,6 +210,9 @@ class CreditProvider():
             credit_db = cursor.fetchone()
             if credit_db is None:
                 return credit_db
-            return credit_db[0]
+            property_url_modified = credit_db[0]
+            upload_url_path = credit_db[1]
+            local_full_path = download_file(upload_url_path, app.config['UPLOAD_FILES_PATH'], property_url_modified)
+            return local_full_path
         finally:
             close_cursor(cnn, cursor)
