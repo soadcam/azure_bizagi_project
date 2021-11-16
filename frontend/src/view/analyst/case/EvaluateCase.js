@@ -136,7 +136,7 @@ export default function EvaluateCase() {
     const { id } = useParams();
 
     useEffect(() => {
-        async function getCase() {
+        const getCase = async () => {
             const url = path.join('/credit', id);
             const result = await getRequest(url, history);
             setAmountRequested(result.amount_requested);
@@ -145,7 +145,7 @@ export default function EvaluateCase() {
             setPropertyUrlModified(result.property_url_modified);
         }
         getCase();
-    }, [], id)
+    }, [history, id]);
 
     async function downloadFormatFile(fullPath) {
         if (fullPath) {

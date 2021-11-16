@@ -153,13 +153,13 @@ export default function NewCase() {
     }
 
     useEffect(() => {
-        async function fetchData() {
+        const getIdentityTypes = async () => {
             const url = path.join('/parametric_entity', 'identity_type');
             const identityTypes = await getRequestUnauthorized(url, history);
             setIdentityTypes(identityTypes);
         }
-        fetchData();
-    }, []);
+        getIdentityTypes();
+    }, [history]);
 
     return (
         <React.Fragment>

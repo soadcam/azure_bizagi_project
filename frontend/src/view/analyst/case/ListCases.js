@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { DataGrid } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import LeftNavigation from '../common/LeftNavigation';
 import Footer from '../common/Footer';
 import { getRequest } from "../../../helper/handleRequest";
@@ -98,7 +98,7 @@ export default function ListCases() {
     let history = useHistory();
 
     useEffect(() => {
-        async function getCases() {
+        const getCases = async () => {
             const url = path.join('/credit', 'analyst');
             const cases = await getRequest(url, history);
             if (cases)
@@ -107,7 +107,7 @@ export default function ListCases() {
                 }));
         }
         getCases();
-    }, [])
+    }, [history]);
 
     const columns = [
         { field: 'credit_id', headerName: 'Id', width: 100 },

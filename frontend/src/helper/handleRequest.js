@@ -3,8 +3,6 @@ import { handleResponse } from './handleResponse';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL
 
-const fileDownload = require('js-file-download');
-
 export async function postRequest(url, history, params = null) {
     try {
         const token = localStorage.getItem('token');
