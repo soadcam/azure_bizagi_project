@@ -1,16 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
-
+<Project Sdk="Microsoft.NET.Sdk.Worker;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>dotnet-Visaji-9AAE8CDB-5DBE-4542-B3C2-9BCF7F585F78</UserSecretsId>
-	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
-
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.0.1" />
     <PackageReference Include="Magick.NET.Core" Version="8.0.1" />
@@ -21,33 +19,34 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
   </ItemGroup>
-
   <ItemGroup>
-	<None Update="wkhtmltox\v0.12.4\32 bit\libwkhtmltox.dll">
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	 <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	</None>
-	<None Update="wkhtmltox\v0.12.4\32 bit\libwkhtmltox.dylib">
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	 <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	</None>
-	<None Update="wkhtmltox\v0.12.4\32 bit\libwkhtmltox.so">
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	 <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	</None>
-	<None Update="wkhtmltox\v0.12.4\64 bit\libwkhtmltox.dll">
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	 <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	</None>
-	<None Update="wkhtmltox\v0.12.4\64 bit\libwkhtmltox.dylib">
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Update="wkhtmltox\v0.12.4\64 bit\libwkhtmltox.so">
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+    <None Update="Settings.job">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="wkhtmltox\v0.12.4\32 bit\libwkhtmltox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="wkhtmltox\v0.12.4\32 bit\libwkhtmltox.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="wkhtmltox\v0.12.4\32 bit\libwkhtmltox.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="wkhtmltox\v0.12.4\64 bit\libwkhtmltox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Update="wkhtmltox\v0.12.4\64 bit\libwkhtmltox.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wkhtmltox\v0.12.4\64 bit\libwkhtmltox.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -55,7 +54,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

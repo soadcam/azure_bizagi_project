@@ -18,3 +18,5 @@ worker/visaji/.vs/visaji/v16/TestStore/0/testlog.manifest
 backend/.vs/VSWorkspaceState.json
 backend/.vs/slnx.sqlite
 backend/.vs/backend/v16/.suo
+backend/.venv
+backend/config.zip

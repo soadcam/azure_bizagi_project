@@ -24,10 +24,13 @@ namespace Visaji.Process.Implementations
 
         private void ProcessImageCredit(Credit credit)
         {
-            credit.PropertyUrlModified = Path.Combine(credit.UploadUrlPath, $"{Path.GetFileNameWithoutExtension(credit.PropertyUrlOriginal)}_modified{Path.GetExtension(credit.PropertyUrlOriginal)}");
-            if (!Directory.Exists(Path.GetDirectoryName(credit.PropertyUrlModified)))
-                Directory.CreateDirectory(Path.GetDirectoryName(credit.PropertyUrlModified));
-            using var image = new MagickImage(credit.PropertyUrlOriginal);
+            string containerName = credit.UploadUrlPath;
+            string fileName = Path.GetFileName(credit.PropertyUrlOriginal);
+            string localFullPath = Path.Combine(Path.GetTempPath(), fileName);
+            string modifiedFileName = $"{Path.GetFileNameWithoutExtension(fileName)}_modified{Path.GetExtension(fileName)}";
+            string localModifiedFullPath = Path.Combine(Path.GetTempPath(), modifiedFileName);
+            _configuration.StorageAccountHelper.DownloadFile(containerName, fileName, localFullPath).Wait();
+            using var image = new MagickImage(localFullPath);
             image.Resize(Convert.ToInt32(_configuration.Configuration["WidthResize"]), Convert.ToInt32(_configuration.Configuration["HeighResize"]));
             image.Strip();
 
@@ -38,7 +41,8 @@ namespace Visaji.Process.Implementations
             label.Annotate($"{credit.Customer.Fullname}{Environment.NewLine}{credit.Customer.IdentityNumber}", Gravity.Southeast);
             image.Composite(label, Gravity.Southeast, CompositeOperator.Over);
 
-            image.Write(credit.PropertyUrlModified);
+            image.Write(localModifiedFullPath);
+            credit.PropertyUrlModified = _configuration.StorageAccountHelper.SaveFile(containerName, modifiedFileName, localModifiedFullPath).Result;
         }
     }
 }

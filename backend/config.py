@@ -1,10 +1,10 @@
 PORT = 5000
 DEBUG = True
 UPLOAD_FILES_PATH = "C:\\uploads"
-SQL_SERVER_SERVER = "(local)"
-SQL_SERVER_DATABASE_NAME = "Visaji"
-SQL_SERVER_USERNAME = "sa"
-SQL_SERVER_PASSWORD = "sa"
+SQL_SERVER_SERVER = "visaji.database.windows.net"
+SQL_SERVER_DATABASE_NAME = "visaji"
+SQL_SERVER_USERNAME = "admon"
+SQL_SERVER_PASSWORD = "Globant2021*"
 APP_SECRET_KEY = "d6bc7e44870743b2b0176f93510d1789"
 MAIL_SERVER = "smtp.gmail.com"
 MAIL_PORT = 587
@@ -13,3 +13,4 @@ MAIL_PASSWORD = "juanca2006A*"
 MAIL_DEFAULT_SENDER = "soadcam@gmail.com"
 MAIL_USE_TLS = True
 MAIL_USE_SSL = False
+STORAGE_ACCOUNT_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=storagevisaji;AccountKey=/OYJNG/lE07wQDmNX/SB3rCXd4X7GdDobt6laKOiuTp6qJw3Dgpo52sCUGNOie/OLh05rCqKkSHO6po6OwDhRg==;EndpointSuffix=core.windows.net"

@@ -13,12 +13,13 @@ db_server = app.config["SQL_SERVER_SERVER"]
 db_database_name = app.config["SQL_SERVER_DATABASE_NAME"]
 db_username = app.config["SQL_SERVER_USERNAME"]
 db_password = app.config["SQL_SERVER_PASSWORD"]
-db_connection_string = 'DRIVER={SQL Server};SERVER=' + \
+db_connection_string = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + \
     db_server+';DATABASE='+db_database_name + \
     ';UID='+db_username+';PWD=' + db_password
 
 def open_connection():
     conn = pyodbc.connect(db_connection_string)
+    print("Connection open.")
     return conn
 
 def close_cursor(cnn, cursor):

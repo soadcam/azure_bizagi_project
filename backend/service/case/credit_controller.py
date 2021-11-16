@@ -19,12 +19,12 @@ credit_provider = CreditProvider()
 # endpoints
 @credit_api.route('/property', methods=['POST'])
 def save_property():
-    file_dir = os.path.join(app.config['UPLOAD_FILES_PATH'], str(uuid.uuid1()))
+    random_container = str(uuid.uuid1())
+    file_dir = os.path.join(app.config['UPLOAD_FILES_PATH'], random_container)
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
     property = request.files['property']
-    property_full_path = os.path.join(file_dir, property.filename)
-    credit_id = credit_provider.save_property(property, property_full_path, file_dir)
+    credit_id = credit_provider.save_property(property, random_container, file_dir)
     return jsonify({'credit_id': int(credit_id)})
 
 @credit_api.route('/', methods=['POST'])

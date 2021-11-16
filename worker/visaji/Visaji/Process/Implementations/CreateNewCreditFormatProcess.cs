@@ -1,12 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Loader;
 using System.Text;
-using System.Threading.Tasks;
 using Visaji.Models;
 
 namespace Visaji.Process.Implementations
@@ -35,12 +29,13 @@ namespace Visaji.Process.Implementations
                         .Replace("@@amount_requested", credit.AmmountRequested.ToString("C"))
                         .Replace("@@comments", credit.Comments);
             var reportBytes = _configuration.ReportService.GeneratePdfReport(formatHtml);
-            credit.FormatCreditUrl = Path.Combine(credit.UploadUrlPath, $"report_{credit.Customer.IdentityNumber}.pdf");
+            credit.FormatCreditUrl = Path.Combine(Path.GetTempPath(), $"report_{credit.Customer.IdentityNumber}.pdf");
             if (File.Exists(credit.FormatCreditUrl))
                 File.Delete(credit.FormatCreditUrl);
             if (!Directory.Exists(Path.GetDirectoryName(credit.FormatCreditUrl)))
                 Directory.CreateDirectory(Path.GetDirectoryName(credit.FormatCreditUrl));
             File.WriteAllBytes(credit.FormatCreditUrl, reportBytes);
+            credit.FormatCreditUrl = _configuration.StorageAccountHelper.SaveFile(credit.UploadUrlPath, Path.GetFileName(credit.FormatCreditUrl), credit.FormatCreditUrl).Result;
         }
     }
 }

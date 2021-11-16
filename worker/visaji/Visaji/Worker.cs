@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Visaji.Models;
 using Visaji.Process;
+using Visaji.Utility;
 using Visaji.Utility.Report;
 
 namespace Visaji
@@ -17,34 +18,34 @@ namespace Visaji
         private readonly VisajiContext _context;
         private readonly IConfiguration _configuration;
         private readonly IReportService _reportService;
+        private readonly IStorageAccountHelper _storageAccountHelper;
         private readonly ProcessConfiguration _processConfiguration;
 
         public Worker(ILogger<Worker> logger,
                         VisajiContext context,
                         IConfiguration configuration,
-                        IReportService reportService)
+                        IReportService reportService,
+                        IStorageAccountHelper storageAccountHelper)
         {
             _logger = logger;
             _context = context;
             _configuration = configuration;
             _reportService = reportService;
+            _storageAccountHelper = storageAccountHelper;
             _processConfiguration = new()
             {
                 Context = _context,
                 Configuration = _configuration,
                 ReportService = _reportService,
+                StorageAccountHelper = _storageAccountHelper,
             };
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var factory = new ProcessFactory(_processConfiguration);
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                CreateFormatNewCredits(factory);
-                await Task.Delay(Convert.ToInt32(_configuration["TimeMSToVerify"]), stoppingToken);
-            }
+            _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+            CreateFormatNewCredits(factory);
         }
 
         private void CreateFormatNewCredits(ProcessFactory processFactory) 

@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
 using Visaji.Models;
+using Visaji.Utility;
 using Visaji.Utility.Report;
 
 namespace Visaji
@@ -29,7 +30,6 @@ namespace Visaji
             CustomAssemblyLoadContext context = new();
             context.LoadUnmanagedLibrary(wkHtmlToPdfPath);
             return Host.CreateDefaultBuilder(args)
-                .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
@@ -38,6 +38,7 @@ namespace Visaji
                     services.AddDatabaseDeveloperPageExceptionFilter();
                     services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
                     services.AddSingleton<IReportService, ReportService>();
+                    services.AddSingleton<IStorageAccountHelper, StorageAccountHelper>();
                 });
         }
     }

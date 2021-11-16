@@ -7,6 +7,7 @@ from model.credit import Credit
 from model.credit_evaluation import CreditEvaluation
 from provider.customer_provider import CustomerProvider
 from utility.sql_server import open_connection, close_cursor
+from utility.blob_storage import create_container, upload_file
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
@@ -27,16 +28,19 @@ if not os.path.exists(uploads_dir):
 class CreditProvider():
 
     # methods
-    def save_property(self, property: FileStorage, property_full_path: str, file_dir: str):
+    def save_property(self, property: FileStorage, container: str, file_dir: str):
+        cnn = None
+        property_full_path = os.path.join(file_dir, property.filename)
         property.save(property_full_path)
-        cnn = None 
+        create_container(container)
+        url_file = upload_file(container, property.filename, property_full_path)
         try:
             cnn = open_connection()
             cursor = cnn.cursor()
             query = """ INSERT INTO credits (property_url_original, upload_url_path) VALUES (?, ?);
                         SELECT SCOPE_IDENTITY() AS credit_id """
-            params = (property_full_path,
-                        file_dir)
+            params = (url_file,
+                        container)
             cursor.execute(query, params)
             cursor.nextset()
             for credit_id in cursor:
